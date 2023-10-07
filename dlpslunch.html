@@ -1,0 +1,150 @@
+ 
+<style>
+  .menu-container {
+    display: flex;
+    flex-wrap: wrap; /* 啟用換行 */
+    justify-content: space-around; /* 調整水平對齊方式 */
+    /* 添加其他 .menu-container 的樣式設定，例如背景色、邊框等 */
+  }
+
+  .menu-item {
+    flex: 0 0 calc(20px); /* 設定每個菜單項目的寬度，並考慮間距 */
+    margin: 10px; /* 添加外邊距 */
+    /* 添加其他 .menu-item 的樣式設定，例如背景色、文字樣式等 */
+  }
+</style>
+
+<div id="lunchApp">
+	 
+   	 <div v-if="info.data.length != 0">
+        		 
+    		 <label for="KitchenName">午餐供餐：</label>
+     		 <select id="KitchenName" style="font-size: 0.875em;" class="form-control form-control-sm" v-model="selectedBatchdataId">
+       		 <option  v-for="option in info.data" v-bind:value="option.BatchDataId">
+           		 {{option.KitchenName}}
+        		 
+       		 </option>
+     		 </select>
+     		 
+    		 <!-- selected: {{selectedBatchdataId}} -->
+  	 <hr style="margin: 0.5em;">      		 
+     		 
+    		 {{getBatchdata}}
+             		 
+      		 <!--顯示菜單  -->  	 
+<div v-if="menu.data.length != 0">
+  <div class="menu-container">
+    <div v-for="dish in menu.data" class="menu-item">
+      <div style="color:white; background-color: #00B271; border: 1px solid #ccc; border-radius: 10px; padding: 10px; text-align: center;">
+        <!-- 放入圖片，指定大小為 150x150 像素 -->
+        <img v-bind:src="'https://fatraceschool.k12ea.gov.tw/dish/pic/' + dish.DishId" alt="菜品圖片" style="width: 150px; height: 150px;">
+        <br>
+        <span v-if="dish.DishType !== undefined">{{dish.DishType}}</span><br>
+        {{dish.DishName}}
+      </div>
+    </div>
+  </div>
+</div>
+      		 <p style="margin: 0.5em;"> </p>
+    		 
+        	<button @click="queryDetail" type="button" class="shadow-sm bg-white rounded">查看詳細資料</button>
+   		 </div>  	 
+   		 
+   		 
+   		 <div v-else>
+       		 <span class="border-bottom" style="font-size: 1em; color:#3572f3;"><span><img src="https://ws.ylc.edu.tw/001/Upload/1054/relpic/-1/1054/c1c1e137-86b8-45cd-909a-47f37c0991ea.png" alt="無資料">
+   		 </div>
+   	</div>
+      		 
+</div>
+
+<script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+
+<script>
+
+  let SchoolId = "64737169";
+  // ====================== script runs from here =======================
+  let Today=new Date();
+  let period=Today.getFullYear()+ "-" + (Today.getMonth()+1) + "-" + Today.getDate();
+  let url = "https://fatraceschool.k12ea.gov.tw/offered/meal?KitchenId=all&MenuType=1&period=" + period + "&SchoolId=" + SchoolId + '"';
+    
+  const { createApp } = Vue
+
+  createApp({
+    data() {
+      return {
+      
+		 info: {
+     		 'data':[]
+   		 },
+   		 menu: {
+     		 'data':[]    
+   		 },
+   		 selectedBatchdataId: '',
+      }
+    },
+    created: function() {
+  	   axios
+       		 .get(url)
+       		 .then(response => {
+           		 
+           		 this.info = response.data;    
+           		 //console.log("廠商:"+this.info.data.length);
+           		 if(this.info.data.length === 1){
+             		 this.selectedBatchdataId = this.info.data[0].BatchDataId;
+           		 } else {
+               		 this.selectedBatchdataId ="000000";
+                		 let vm = this;            		 
+                 		 
+              		 
+               		 this.info.data.forEach(item=>{
+                		 let dish = {};
+                		 dish.DishName = item.KitchenName;
+                		 vm.menu.data.push(dish);
+               		 })
+               		 console.log(vm.menu);
+            		 
+           		 }
+        		 });
+  	 
+    },
+    computed: {
+  	   getBatchdata: function(){
+        		 if(this.info.data.length !=0){          		 
+           		 this.getMenu();
+         		 
+       		 }
+    		 }
+    },
+    methods: {
+    
+			getMenu: function() {
+              		 //https://fatraceschool.k12ea.gov.tw/dish?BatchDataId=1600228898323523
+              		 if(this.selectedBatchdataId !== "000000"){
+               		 
+                       		 let url = "https://fatraceschool.k12ea.gov.tw/dish?BatchDataId=" + this.selectedBatchdataId;
+              		 axios
+                		 .get(url)
+                		 .then(response => {
+                    		 this.menu = response.data;                   		 
+                 		 })
+              		 }
+              		 
+     		 
+ 		 },
+ 		 queryDetail: function(){  
+			  let url = "https://fatraceschool.k12ea.gov.tw/frontend/search.html?school="+ SchoolId +"/" ;
+   		 window.open(url);  
+ 		 }
+  		 
+    
+    
+    
+    }
+  }).mount('#lunchApp')
+ 
+  //範例,
+  //https://fatraceschool.k12ea.gov.tw/cateringservice/web/custom/mschool/64740444/
+  //https://fatraceschool.k12ea.gov.tw/offered/meal?KitchenId=all&MenuType=1&SchoolId=064546&period=2020-09-16
+</script>
