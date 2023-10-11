@@ -38,7 +38,8 @@
 <div v-if="menu.data.length != 0">
   <div class="menu-container">
     <div v-for="dish in menu.data" class="menu-item">
-      <div style="color:white; background-color: #00B271; border: 1px solid #ccc; border-radius: 10px; padding: 10px; text-align: center;">
+      <!-- 使用 v-if 條件判斷，如果 dish.DishType 不等於 "調味料"，則顯示該項目 -->
+      <div v-if="dish.DishName !== '調味料'" style="color:white; background-color: #00B271; border: 1px solid #ccc; border-radius: 10px; padding: 10px; text-align: center;">
         <!-- 放入圖片，指定大小為 150x150 像素 -->
         <img v-bind:src="'https://fatraceschool.k12ea.gov.tw/dish/pic/' + dish.DishId" alt="菜品圖片" style="width: 150px; height: 150px;">
         <br>
