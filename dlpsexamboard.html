@@ -150,7 +150,7 @@
                 <div id="clock" class="clock text-7xl md:text-9xl font-bold chalk-text mb-3">--:--:--</div>
                 <div id="examStatus" class="text-3xl md:text-4xl font-bold text-center py-2 px-6 rounded-lg bg-black bg-opacity-40 chalk-text inline-block">尚未開始考試</div>
             </div>
-            <div class="text-center mb-4">
+            <div class="text-center mb-4 opacity-5">
                 <label for="groupSelector" class="text-white text-lg chalk-text">選擇年級群組：</label>
                 <select id="groupSelector" class="text-white text-lg chalk-text p-2 rounded">
                     <option value="低年級">低年級</option>
@@ -212,7 +212,7 @@
 				<!-- 右側：應考人數 -->
                 <div class="bg-black bg-opacity-30 rounded-lg p-4 shadow-md">
                     <div class="mb-3 flex items-center">
-                        <label class="text-lg chalk-text w-1/4">應考人數</label>
+                        <label class="text-lg chalk-text w-1/4">應到人數</label>
                         <div class="flex items-center w-3/4">
                             <div id="totalStudents" class="flex-grow compact-input p-2 bg-black bg-opacity-30 border border-gray-600 rounded-lg text-lg text-center font-bold chalk-text text-2xl">25</div>
                             <div class="ml-2 flex flex-col">
@@ -222,7 +222,7 @@
                         </div>
                     </div>
                     <div class="mb-3 flex items-center">
-                        <label class="text-lg chalk-text w-1/4">缺考人數</label>
+                        <label class="text-lg chalk-text w-1/4">缺席人數</label>
                         <div class="flex items-center w-3/4">
                             <div id="absentStudents" class="flex-grow compact-input p-2 bg-black bg-opacity-30 border border-gray-600 rounded-lg text-lg text-center font-bold chalk-text text-2xl">0</div>
                             <div class="ml-2 flex flex-col">
@@ -238,6 +238,16 @@
                             <div class="ml-2 flex flex-col">
                                 <button onclick="adjustNumber('classroomStudents', 1)" class="btn bg-blue-600 text-white hover:bg-blue-700 mb-1 text-sm">+</button>
                                 <button onclick="adjustNumber('classroomStudents', -1)" class="btn bg-blue-600 text-white hover:bg-blue-700 text-sm">-</button>
+                            </div>
+                        </div>
+                    </div>
+					<div class="mb-3 flex items-center">
+                        <label class="text-lg chalk-text w-1/4">實到人數</label>
+                        <div class="flex items-center w-3/4">
+                            <div id="presentStudents" class="flex-grow compact-input p-2 bg-black bg-opacity-30 border border-gray-600 rounded-lg text-lg text-center font-bold chalk-text text-2xl">25</div>
+							<div class="ml-2 flex flex-col opacity-5">
+                                <button disabled onclick="adjustNumber('classroomStudents', 1)" class="btn bg-blue-600 text-white hover:bg-blue-700 mb-1 text-sm">+</button>
+                                <button disabled onclick="adjustNumber('classroomStudents', -1)" class="btn bg-blue-600 text-white hover:bg-blue-700 text-sm">-</button>
                             </div>
                         </div>
                     </div>
@@ -382,6 +392,8 @@
             }
 
             el.textContent = val;
+			
+			updatePresentStudents();	//即時更新實到人數
         }
 
 
@@ -446,6 +458,16 @@
             // 更新考試狀態
             checkExamStatus(new Date());
         }
+		
+		//更新實到人數
+		function updatePresentStudents() {
+			const total = parseInt(document.getElementById('totalStudents').textContent) || 0;
+			const absent = parseInt(document.getElementById('absentStudents').textContent) || 0;
+			const classroom = parseInt(document.getElementById('classroomStudents').textContent) || 0;
+			const present = Math.max(0, total - absent - classroom);
+			document.getElementById('presentStudents').textContent = present;
+		}
+
 
         document.addEventListener('DOMContentLoaded', () => {
             updateClock();
