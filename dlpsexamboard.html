@@ -15,10 +15,10 @@
             height: 100vh;
             overflow: hidden;
         }
-        
+
         .blackboard {
             background-color: #0f2c1e;
-            background-image: 
+            background-image:A
                 linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
                 linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
                 linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
@@ -32,7 +32,7 @@
             width: 100vw;
             overflow: auto;
         }
-        
+
         .blackboard::before {
             content: '';
             position: absolute;
@@ -44,34 +44,30 @@
             pointer-events: none;
             z-index: 0;
         }
-        
+
         .chalk-text {
             color: rgba(255, 255, 255, 0.9);
             text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.4);
             font-family: 'Comic Sans MS', 'Chalkboard SE', cursive;
         }
-        
+
         .clock {
             font-variant-numeric: tabular-nums;
             letter-spacing: 2px;
             text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
         }
-        
+
         select, .number-display {
-            background-color: rgba(255, 255, 255, 0.1);
+            background-color: rgba(0, 0, 0, 0.3);
             border: 1px solid rgba(255, 255, 255, 0.3);
             color: white;
         }
-        
-        select {
-            appearance: none;
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%23ffffff'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
-            background-repeat: no-repeat;
-            background-position: right 0.5rem center;
-            background-size: 1.5em 1.5em;
-            padding-right: 2.5rem;
+
+        select option {
+            background-color: white;
+            color: #333;
         }
-        
+		
         /* 修復下拉選單顏色問題 */
         select option {
             background-color: white;
@@ -149,183 +145,99 @@
 <body>
     <div class="blackboard">
         <div class="content-area p-4 md:p-6">
-            <!-- 時鐘區域 - 調整尺寸介於12版和13版之間 -->
-            <div class="flex flex-col items-center justify-center mb-1">
-                <h2 class="text-xl md:text-2xl text-gray-300 mb-1 chalk-text">現在時間</h2>
-                <div id="clock" class="clock text-6xl md:text-8xl lg:text-9xl font-bold text-white py-2 px-4 rounded-lg inline-block chalk-text">00:00:00</div>
-                
-                <!-- 考試狀態訊息 - 移到時鐘下方 -->
-                <div id="examStatus" class="text-2xl md:text-3xl font-bold text-center py-2 px-4 rounded-lg bg-black bg-opacity-40 chalk-text w-4/5 max-w-3xl">
-                    尚未開始考試
-                </div>
+            <div class="text-center mb-4">
+                <h2 class="text-xl md:text-2xl text-white chalk-text mb-2">現在時間</h2>
+                <div id="clock" class="clock text-7xl md:text-9xl font-bold chalk-text mb-3">--:--:--</div>
+                <div id="examStatus" class="text-3xl md:text-4xl font-bold text-center py-2 px-6 rounded-lg bg-black bg-opacity-40 chalk-text inline-block">尚未開始考試</div>
             </div>
-            
-            <!-- 考試資訊區域 -->
+            <div class="text-center mb-4">
+                <label for="groupSelector" class="text-white text-lg chalk-text">選擇年級群組：</label>
+                <select id="groupSelector" class="text-white text-lg chalk-text p-2 rounded">
+                    <option value="低年級">低年級</option>
+                    <option value="中高年級">中高年級</option>
+                </select>
+            </div>
+			<!-- 左側：考試科目與時間 -->
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-2">
-                <!-- 左側：考試科目與時間 -->
-                <div class="bg-black bg-opacity-30 rounded-lg p-3 md:p-4 shadow-md">
-                    <div class="mb-1 chalk-text">
-                        <!-- 第一列：科目和時間 -->
-                        <div class="time-row compact-row mb-2 pb-2">
-                            <div class="flex items-center mb-1">
-                                <div class="w-1/4 pr-2">
-                                    <select id="subject1" class="w-full compact-input p-2 rounded-lg text-lg focus:outline-none focus:ring-2 focus:ring-blue-500" onchange="handleSubjectChange(1)">
-                                        <option value="">--</option>
-                                        <option value="國語" selected>國語</option>
-                                        <option value="數學">數學</option>
-                                        <option value="英文">英文</option>
-                                        <option value="自然">自然</option>
-                                        <option value="社會">社會</option>
-										<option value="生活">生活</option>
-                                    </select>
-                                </div>
-                                <div class="w-3/4 flex items-center" id="timeContainer1">
-                                    <div class="flex-grow flex items-center">
-                                        <div class="flex-1 flex items-center">
-                                            <input type="text" id="startTime1" value="8:45" data-default="8:45" class="w-full compact-input p-2 bg-black bg-opacity-30 border border-gray-600 rounded-lg text-lg text-center focus:outline-none focus:ring-2 focus:ring-blue-500">
-                                            <div class="flex flex-col ml-1">
-                                                <button onclick="adjustSingleTime('startTime1', 5)" class="btn bg-blue-600 text-white hover:bg-blue-700 mb-1 text-sm">+</button>
-                                                <button onclick="adjustSingleTime('startTime1', -5)" class="btn bg-blue-600 text-white hover:bg-blue-700 text-sm">-</button>
-                                            </div>
-                                        </div>
-                                        
-                                        <div class="time-separator">～</div>
-                                        
-                                        <div class="flex-1 flex items-center">
-                                            <input type="text" id="endTime1" value="9:30" data-default="9:30" class="w-full compact-input p-2 bg-black bg-opacity-30 border border-gray-600 rounded-lg text-lg text-center focus:outline-none focus:ring-2 focus:ring-blue-500">
-                                            <div class="flex flex-col ml-1">
-                                                <button onclick="adjustSingleTime('endTime1', 5)" class="btn bg-blue-600 text-white hover:bg-blue-700 mb-1 text-sm">+</button>
-                                                <button onclick="adjustSingleTime('endTime1', -5)" class="btn bg-blue-600 text-white hover:bg-blue-700 text-sm">-</button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <!-- 第二列：科目和時間 -->
-                        <div class="time-row compact-row mb-2 pb-2">
-                            <div class="flex items-center mb-1">
-                                <div class="w-1/4 pr-2">
-                                    <select id="subject2" class="w-full compact-input p-2 rounded-lg text-lg focus:outline-none focus:ring-2 focus:ring-blue-500" onchange="handleSubjectChange(2)">
-                                        <option value="">--</option>
-                                        <option value="國語">國語</option>
-                                        <option value="數學">數學</option>
-                                        <option value="英文">英文</option>
-                                        <option value="自然" selected>自然</option>
-                                        <option value="社會">社會</option>
-										<option value="生活">生活</option>
-                                    </select>
-                                </div>
-                                <div class="w-3/4 flex items-center" id="timeContainer2">
-                                    <div class="flex-grow flex items-center">
-                                        <div class="flex-1 flex items-center">
-                                            <input type="text" id="startTime2" value="9:40" data-default="9:40" class="w-full compact-input p-2 bg-black bg-opacity-30 border border-gray-600 rounded-lg text-lg text-center focus:outline-none focus:ring-2 focus:ring-blue-500">
-                                            <div class="flex flex-col ml-1">
-                                                <button onclick="adjustSingleTime('startTime2', 5)" class="btn bg-blue-600 text-white hover:bg-blue-700 mb-1 text-sm">+</button>
-                                                <button onclick="adjustSingleTime('startTime2', -5)" class="btn bg-blue-600 text-white hover:bg-blue-700 text-sm">-</button>
-                                            </div>
-                                        </div>
-                                        
-                                        <div class="time-separator">～</div>
-                                        
-                                        <div class="flex-1 flex items-center">
-                                            <input type="text" id="endTime2" value="10:20" data-default="10:20" class="w-full compact-input p-2 bg-black bg-opacity-30 border border-gray-600 rounded-lg text-lg text-center focus:outline-none focus:ring-2 focus:ring-blue-500">
-                                            <div class="flex flex-col ml-1">
-                                                <button onclick="adjustSingleTime('endTime2', 5)" class="btn bg-blue-600 text-white hover:bg-blue-700 mb-1 text-sm">+</button>
-                                                <button onclick="adjustSingleTime('endTime2', -5)" class="btn bg-blue-600 text-white hover:bg-blue-700 text-sm">-</button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <!-- 第三列：科目和時間 -->
-                        <div class="time-row compact-row">
-                            <div class="flex items-center mb-1">
-                                <div class="w-1/4 pr-2">
-                                    <select id="subject3" class="w-full compact-input p-2 rounded-lg text-lg focus:outline-none focus:ring-2 focus:ring-blue-500" onchange="handleSubjectChange(3)">
-                                        <option value="">--</option>
-                                        <option value="國語">國語</option>
-                                        <option value="數學">數學</option>
-                                        <option value="英文" selected>英文</option>
-                                        <option value="自然">自然</option>
-                                        <option value="生活">生活</option>
-                                    </select>
-                                </div>
-                                <div class="w-3/4 flex items-center" id="timeContainer3">
-                                    <div class="flex-grow flex items-center">
-                                        <div class="flex-1 flex items-center">
-                                            <input type="text" id="startTime3" value="10:30" data-default="10:30" class="w-full compact-input p-2 bg-black bg-opacity-30 border border-gray-600 rounded-lg text-lg text-center focus:outline-none focus:ring-2 focus:ring-blue-500">
-                                            <div class="flex flex-col ml-1">
-                                                <button onclick="adjustSingleTime('startTime3', 5)" class="btn bg-blue-600 text-white hover:bg-blue-700 mb-1 text-sm">+</button>
-                                                <button onclick="adjustSingleTime('startTime3', -5)" class="btn bg-blue-600 text-white hover:bg-blue-700 text-sm">-</button>
-                                            </div>
-                                        </div>
-                                        
-                                        <div class="time-separator">～</div>
-                                        
-                                        <div class="flex-1 flex items-center">
-                                            <input type="text" id="endTime3" value="11:10" data-default="11:10" class="w-full compact-input p-2 bg-black bg-opacity-30 border border-gray-600 rounded-lg text-lg text-center focus:outline-none focus:ring-2 focus:ring-blue-500">
-                                            <div class="flex flex-col ml-1">
-                                                <button onclick="adjustSingleTime('endTime3', 5)" class="btn bg-blue-600 text-white hover:bg-blue-700 mb-1 text-sm">+</button>
-                                                <button onclick="adjustSingleTime('endTime3', -5)" class="btn bg-blue-600 text-white hover:bg-blue-700 text-sm">-</button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                <div id="scheduleArea" class="bg-black bg-opacity-30 rounded-lg p-4 shadow-md">
+                    <!-- 迴圈產出三列科目與時間設定 -->
+                    <script>
+                        const subjects = ['--', '國語', '數學', '英文', '自然', '社會', '生活'];
+                        for (let i = 1; i <= 3; i++) {
+							const startMin = 8 * 60 + 50 + (i - 1) * 50; // 起始時間從8:50開始，每列加50分鐘
+							const endMin = 9 * 60 + 30 + (i - 1) * 50;   // 結束時間從9:30開始，每列加50分鐘
+
+							const startH = String(Math.floor(startMin / 60)).padStart(2, '0');
+							const startM = String(startMin % 60).padStart(2, '0');
+							const endH = String(Math.floor(endMin / 60)).padStart(2, '0');
+							const endM = String(endMin % 60).padStart(2, '0');
+
+							const startTime = `${startH}:${startM}`;
+							const endTime = `${endH}:${endM}`;
+							
+                            document.write(`
+							<div class="time-row compact-row mb-2 pb-2">
+								<div class="flex items-center mb-1">
+									<div class="w-1/4 pr-2">
+										<div class='text-lg chalk-text flex gap-2 items-center justify-center'>
+											<select id='subject${i}' class='w-full compact-input p-2 rounded-lg text-lg focus:outline-none focus:ring-2 focus:ring-blue-500' onchange='handleSubjectChange(${i})'>
+												${subjects.map(s => `<option value='${s}'>${s}</option>`).join('')}
+											</select>
+										</div>
+									</div>
+									<div class="w-3/4 flex items-center" id='timeContainer${i}'>
+										<div class='flex-grow flex items-center'>
+											<div class="flex-1 flex items-center">
+												<input type='text' id='startTime${i}' value='${startTime}' class='w-full compact-input p-2 bg-black bg-opacity-30 border border-gray-600 rounded-lg text-lg text-center focus:outline-none focus:ring-2 focus:ring-blue-500 chalk-text text-2xl' data-default='${startTime}'>
+												<div class='flex flex-col ml-1'>
+													<button onclick='adjustSingleTime("startTime${i}", 5)' class='btn bg-blue-600 text-white hover:bg-blue-700 mb-1 text-sm'>+</button>
+													<button onclick='adjustSingleTime("startTime${i}", -5)' class='btn bg-blue-600 text-white hover:bg-blue-700 text-sm'>-</button>
+												</div>
+											</div>
+											<span class='time-separator'>～</span>
+											<div class='flex-1 flex items-center'>
+												<input type='text' id='endTime${i}' value='${endTime}' class='w-full compact-input p-2 bg-black bg-opacity-30 border border-gray-600 rounded-lg text-lg text-center focus:outline-none focus:ring-2 focus:ring-blue-500 chalk-text text-2xl' data-default='${endTime}'>
+												<div class='flex flex-col ml-1'>
+													<button onclick='adjustSingleTime("endTime${i}", 5)' class='btn bg-blue-600 text-white hover:bg-blue-700 mb-1 text-sm'>+</button>
+													<button onclick='adjustSingleTime("endTime${i}", -5)' class='btn bg-blue-600 text-white hover:bg-blue-700 text-sm'>-</button>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>	
+							</div>`);
+                        }
+                    </script>
                 </div>
-                
-                <!-- 右側：應考人數 -->
-                <div class="bg-black bg-opacity-30 rounded-lg p-3 md:p-4 shadow-md">
-                    <!-- 應考人數 - 單行顯示 -->
-                    <div class="mb-3">
-                        <div class="flex items-center">
-                            <label class="text-lg text-gray-300 chalk-text w-1/3">應考人數</label>
-                            <div class="flex items-center w-2/3">
-                                <div id="totalStudents" class="flex-grow compact-input p-2 bg-black bg-opacity-30 border border-gray-600 rounded-lg text-lg text-center font-bold chalk-text">
-                                    25
-                                </div>
-                                <div class="ml-2 flex flex-col">
-                                    <button onclick="adjustNumber('totalStudents', 1)" class="btn bg-blue-600 text-white hover:bg-blue-700 mb-1 text-sm">+</button>
-                                    <button onclick="adjustNumber('totalStudents', -1)" class="btn bg-blue-600 text-white hover:bg-blue-700 text-sm">-</button>
-                                </div>
+				<!-- 右側：應考人數 -->
+                <div class="bg-black bg-opacity-30 rounded-lg p-4 shadow-md">
+                    <div class="mb-3 flex items-center">
+                        <label class="text-lg chalk-text w-1/4">應考人數</label>
+                        <div class="flex items-center w-3/4">
+                            <div id="totalStudents" class="flex-grow compact-input p-2 bg-black bg-opacity-30 border border-gray-600 rounded-lg text-lg text-center font-bold chalk-text text-2xl">25</div>
+                            <div class="ml-2 flex flex-col">
+                                <button onclick="adjustNumber('totalStudents', 1)" class="btn bg-blue-600 text-white hover:bg-blue-700 mb-1 text-sm">+</button>
+                                <button onclick="adjustNumber('totalStudents', -1)" class="btn bg-blue-600 text-white hover:bg-blue-700 text-sm">-</button>
                             </div>
                         </div>
                     </div>
-                    
-                    <!-- 缺考人數 - 單行顯示 -->
-                    <div class="mb-3">
-                        <div class="flex items-center">
-                            <label class="text-lg text-gray-300 chalk-text w-1/3">缺考人數</label>
-                            <div class="flex items-center w-2/3">
-                                <div id="absentStudents" class="flex-grow compact-input p-2 bg-black bg-opacity-30 border border-gray-600 rounded-lg text-lg text-center font-bold chalk-text">
-                                    0
-                                </div>
-                                <div class="ml-2 flex flex-col">
-                                    <button onclick="adjustNumber('absentStudents', 1)" class="btn bg-blue-600 text-white hover:bg-blue-700 mb-1 text-sm">+</button>
-                                    <button onclick="adjustNumber('absentStudents', -1)" class="btn bg-blue-600 text-white hover:bg-blue-700 text-sm">-</button>
-                                </div>
+                    <div class="mb-3 flex items-center">
+                        <label class="text-lg chalk-text w-1/4">缺考人數</label>
+                        <div class="flex items-center w-3/4">
+                            <div id="absentStudents" class="flex-grow compact-input p-2 bg-black bg-opacity-30 border border-gray-600 rounded-lg text-lg text-center font-bold chalk-text text-2xl">0</div>
+                            <div class="ml-2 flex flex-col">
+                                <button onclick="adjustNumber('absentStudents', 1)" class="btn bg-blue-600 text-white hover:bg-blue-700 mb-1 text-sm">+</button>
+                                <button onclick="adjustNumber('absentStudents', -1)" class="btn bg-blue-600 text-white hover:bg-blue-700 text-sm">-</button>
                             </div>
                         </div>
                     </div>
-                    
-                    <!-- 學習教室考場 - 單行顯示 -->
-                    <div class="mb-2">
-                        <div class="flex items-center">
-                            <label class="text-lg text-gray-300 chalk-text w-1/3">學習教室考場</label>
-                            <div class="flex items-center w-2/3">
-                                <div id="classroomStudents" class="flex-grow compact-input p-2 bg-black bg-opacity-30 border border-gray-600 rounded-lg text-lg text-center font-bold chalk-text">
-                                    0
-                                </div>
-                                <div class="ml-2 flex flex-col">
-                                    <button onclick="adjustNumber('classroomStudents', 1)" class="btn bg-blue-600 text-white hover:bg-blue-700 mb-1 text-sm">+</button>
-                                    <button onclick="adjustNumber('classroomStudents', -1)" class="btn bg-blue-600 text-white hover:bg-blue-700 text-sm">-</button>
-                                </div>
+                    <div class="mb-3 flex items-center">
+                        <label class="text-lg chalk-text w-1/4">學習教室考場</label>
+                        <div class="flex items-center w-3/4">
+                            <div id="classroomStudents" class="flex-grow compact-input p-2 bg-black bg-opacity-30 border border-gray-600 rounded-lg text-lg text-center font-bold chalk-text text-2xl">0</div>
+                            <div class="ml-2 flex flex-col">
+                                <button onclick="adjustNumber('classroomStudents', 1)" class="btn bg-blue-600 text-white hover:bg-blue-700 mb-1 text-sm">+</button>
+                                <button onclick="adjustNumber('classroomStudents', -1)" class="btn bg-blue-600 text-white hover:bg-blue-700 text-sm">-</button>
                             </div>
                         </div>
                     </div>
@@ -335,57 +247,55 @@
     </div>
 
     <script>
-        // 時鐘功能
         function updateClock() {
             const now = new Date();
-            const hours = String(now.getHours()).padStart(2, '0');
-            const minutes = String(now.getMinutes()).padStart(2, '0');
-            const seconds = String(now.getSeconds()).padStart(2, '0');
+            const h = String(now.getHours()).padStart(2, '0');
+            const m = String(now.getMinutes()).padStart(2, '0');
+            const s = String(now.getSeconds()).padStart(2, '0');
+            document.getElementById('clock').textContent = `${h}:${m}:${s}`;
             
-            document.getElementById('clock').textContent = `${hours}:${minutes}:${seconds}`;
-            
-            // 檢查是否在考試時間內
+			// 檢查是否在考試時間內
             checkExamStatus(now);
-            
-            setTimeout(updateClock, 1000);
+			
+			setTimeout(updateClock, 1000);
         }
-        
-        // 處理科目變更
-        function handleSubjectChange(rowNum) {
-            const subjectSelect = document.getElementById(`subject${rowNum}`);
-            const timeContainer = document.getElementById(`timeContainer${rowNum}`);
-            const startTimeInput = document.getElementById(`startTime${rowNum}`);
-            const endTimeInput = document.getElementById(`endTime${rowNum}`);
-            
-            // 獲取預設時間值
-            const defaultStartTime = startTimeInput.getAttribute('data-default');
-            const defaultEndTime = endTimeInput.getAttribute('data-default');
-            
-            if (subjectSelect.value === "") {
-                // 如果選擇空值，將科目和時間欄位設為半透明，並將時間設為0:00
-                subjectSelect.classList.add('faded');
-                timeContainer.classList.add('faded');
-                startTimeInput.value = "0:00";
-                endTimeInput.value = "0:00";
-            } else {
-                // 如果選擇有效值，恢復科目和時間欄位正常顯示，並恢復預設時間
-                subjectSelect.classList.remove('faded');
-                timeContainer.classList.remove('faded');
-                startTimeInput.value = defaultStartTime;
-                endTimeInput.value = defaultEndTime;
-            }
-            
-            // 更新考試狀態
-            checkExamStatus(new Date());
+
+        function getGroupFromURL() {
+            const params = new URLSearchParams(window.location.search);
+            const groupParam = params.get('group');
+            return groupParam === '1' ? '低年級' : '中高年級';
         }
-        
-        // 檢查考試狀態
+		
+		function padTime(timeStr) {
+			const [h, m] = timeStr.split(':').map(n => String(n).padStart(2, '0'));
+			return `${h}:${m}`;
+		}
+
+        async function fetchSchedule(group) {
+            const url = `https://script.google.com/macros/s/AKfycbwR2O9Me4EHvPt2rhpqKIIZxeyiKnGgPKe4h-LMVIbgM72qZmoX4W83xDJLcadC2Gig/exec?group=${group}`;
+            const res = await fetch(url);
+            const data = await res.json();
+
+            data.forEach((item, index) => {
+                if (index < 3) {
+					const i = index + 1;
+                    document.getElementById(`subject${i}`).value = item.subject;
+                    document.getElementById(`startTime${i}`).value = padTime(item.start);
+					document.getElementById(`endTime${i}`).value = padTime(item.end);
+					
+					handleSubjectChange(i, true);
+                }
+            });
+        }
+		
+		// 檢查考試狀態
         function checkExamStatus(now) {
             const currentHour = now.getHours();
             const currentMinute = now.getMinutes();
             const currentTime = currentHour * 60 + currentMinute;
             
             let inExam = false;
+			let justEnd = false;
             let currentExamSubject = "";
             let currentExamRow = 0;
             
@@ -410,37 +320,72 @@
                 const endElement = document.getElementById(`endTime${i}`);
                 const subjectElement = document.getElementById(`subject${i}`);
                 const rowElement = startElement.closest('.time-row');
+                const examStatus = document.getElementById('examStatus');
                 
-                if (currentTime >= startTime && currentTime <= endTime) {
-                    // 考試進行中
-                    inExam = true;
-                    currentExamSubject = subjectElement.value;
-                    currentExamRow = i;
-                    
-                    startElement.classList.add('text-red-500');
-                    endElement.classList.add('text-red-500');
-                    rowElement.classList.add('active-exam');
-                } else {
-                    // 考試未開始或已結束
-                    startElement.classList.remove('text-red-500');
-                    endElement.classList.remove('text-red-500');
-                    rowElement.classList.remove('active-exam');
-                }
+				if (currentTime >= startTime && currentTime < endTime) {
+					// 考試進行中
+					inExam = true;
+					currentExamSubject = subjectElement.value;
+					currentExamRow = i;
+
+					startElement.classList.add('text-red-500');
+					endElement.classList.add('text-red-500');
+					rowElement.classList.add('active-exam');
+					
+				} else if (currentTime >= endTime && currentTime < endTime + 5) {
+					// 剛結束 5 分鐘內
+					justEnd = true;
+					currentExamSubject = subjectElement.value;
+					startElement.classList.remove('text-red-500');
+					endElement.classList.remove('text-red-500');
+					rowElement.classList.remove('active-exam');
+					
+				} else {
+					// 尚未開始或已完全結束超過5分鐘
+					startElement.classList.remove('text-red-500');
+					endElement.classList.remove('text-red-500');
+					rowElement.classList.remove('active-exam');
+				}
             }
+			
+			if (!inExam && examStatus.textContent.indexOf("結束") === -1) {
+				examStatus.textContent = '尚未開始考試';
+				examStatus.classList.remove('bg-red-900', 'text-red-300', 'bg-yellow-800', 'text-yellow-200');
+				examStatus.classList.add('bg-black', 'bg-opacity-40');
+			}
             
-            const examStatus = document.getElementById('examStatus');
+            
             if (inExam) {
                 examStatus.textContent = `正在進行 ${currentExamSubject} 考試`;
                 examStatus.classList.add('bg-red-900', 'bg-opacity-50', 'text-red-300');
-                examStatus.classList.remove('bg-black', 'bg-opacity-40');
-            } else {
+                examStatus.classList.remove('bg-black', 'bg-opacity-40', 'bg-yellow-800', 'text-yellow-200');
+            } else if (justEnd) {
+				examStatus.textContent = `${currentExamSubject} 考試結束`;
+				examStatus.classList.add('bg-yellow-800', 'bg-opacity-50', 'text-yellow-200');
+				examStatus.classList.remove('bg-red-900', 'bg-opacity-50', 'text-red-300', 'bg-black', 'bg-opacity-40');
+			} else {
                 examStatus.textContent = '尚未開始考試';
                 examStatus.classList.remove('bg-red-900', 'bg-opacity-50', 'text-red-300');
                 examStatus.classList.add('bg-black', 'bg-opacity-40');
             }
         }
-        
-        // 調整單個時間（增加/減少5分鐘）
+	
+		//調整人數
+        function adjustNumber(id, delta) {
+            const el = document.getElementById(id);
+            let val = parseInt(el.textContent) || 0;
+            val = Math.max(0, val + delta);
+
+            if (id === 'absentStudents') {
+                const total = parseInt(document.getElementById('totalStudents').textContent) || 0;
+                val = Math.min(val, total);
+            }
+
+            el.textContent = val;
+        }
+
+
+		// 調整單個時間（增加/減少5分鐘）
         function adjustSingleTime(timeId, minutes) {
             const timeInput = document.getElementById(timeId);
             const rowNum = timeId.match(/\d+/)[0]; // 獲取行號
@@ -462,7 +407,7 @@
             newHour = Math.max(0, Math.min(23, newHour));
             
             // 更新輸入框
-            timeInput.value = `${newHour}:${String(newMinute).padStart(2, '0')}`;
+            timeInput.value = `${String(newHour).padStart(2, '0')}:${String(newMinute).padStart(2, '0')}`;
             
             // 同時更新預設值，以便在切換科目後能恢復到調整後的時間
             timeInput.setAttribute('data-default', timeInput.value);
@@ -470,30 +415,50 @@
             // 檢查考試狀態
             checkExamStatus(new Date());
         }
-        
-        // 調整人數
-        function adjustNumber(elementId, change) {
-            const element = document.getElementById(elementId);
-            let value = parseInt(element.textContent) + change;
+		
+		// 處理科目變更
+        function handleSubjectChange(rowNum, skipTimeReset = false) {
+            const subjectSelect = document.getElementById(`subject${rowNum}`);
+            const timeContainer = document.getElementById(`timeContainer${rowNum}`);
+            const startTimeInput = document.getElementById(`startTime${rowNum}`);
+            const endTimeInput = document.getElementById(`endTime${rowNum}`);
             
-            // 確保數值不小於0
-            value = Math.max(0, value);
+            // 獲取預設時間值
+            const defaultStartTime = startTimeInput.getAttribute('data-default');
+            const defaultEndTime = endTimeInput.getAttribute('data-default');
             
-            // 確保缺考人數不超過總人數
-            if (elementId === 'absentStudents') {
-                const totalStudents = parseInt(document.getElementById('totalStudents').textContent);
-                value = Math.min(value, totalStudents);
+            if (subjectSelect.value === "--") {
+                // 如果選擇空值，將科目和時間欄位設為半透明，並將時間設為0:00
+                subjectSelect.classList.add('faded');
+                timeContainer.classList.add('faded');
+                startTimeInput.value = "0:00";
+                endTimeInput.value = "0:00";
+            } else {
+                // 如果選擇有效值，恢復科目和時間欄位正常顯示，並恢復預設時間
+                subjectSelect.classList.remove('faded');
+                timeContainer.classList.remove('faded');
+				if (!skipTimeReset) {
+					startTimeInput.value = defaultStartTime;
+					endTimeInput.value = defaultEndTime;
+				}
             }
             
-            element.textContent = value;
+            // 更新考試狀態
+            checkExamStatus(new Date());
         }
-        
-        // 初始化
-        document.addEventListener('DOMContentLoaded', function() {
-            // 啟動時鐘
+
+        document.addEventListener('DOMContentLoaded', () => {
             updateClock();
-            
-            // 初始化科目選擇狀態
+            const group = getGroupFromURL();
+            document.getElementById('groupSelector').value = group;
+            fetchSchedule(group);
+
+            document.getElementById('groupSelector').addEventListener('change', e => {
+                fetchSchedule(e.target.value);
+				
+			});
+			
+			// 初始化科目選擇狀態
             for (let i = 1; i <= 3; i++) {
                 // 為每個時間輸入框保存預設值
                 const startTimeInput = document.getElementById(`startTime${i}`);
@@ -514,8 +479,8 @@
                 document.getElementById(`subject${i}`).addEventListener('change', function() {
                     handleSubjectChange(i);
                 });
-            }
+            }	
         });
     </script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'93143fc1710df212',t:'MTc0NDgxMjQ0Ny4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</body>
 </html>
