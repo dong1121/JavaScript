@@ -48,7 +48,7 @@
         .chalk-text {
             color: rgba(255, 255, 255, 0.9);
             text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.4);
-            font-family: 'Comic Sans MS', 'Chalkboard SE', cursive;
+            font-family: 'ComicFont', 'HunnyFont', sans-serif;
         }
 
         .clock {
@@ -140,6 +140,26 @@
             padding-top: 0.5rem !important;
             padding-bottom: 0.5rem !important;
         }
+		
+		/* 中文字型：jf-openhuninn-2.1.ttf */
+		@font-face {
+		  font-family: 'HunnyFont';
+		  src: url('https://raw.githubusercontent.com/dong1121/JavaScript/main/fonts/jf-openhuninn-2.1.ttf') format('truetype');
+		  font-weight: normal;
+		  font-style: normal;
+		  font-display: swap;
+		  unicode-range: U+4E00-9FFF; /* 中文範圍 */
+		}
+
+		/* 英文字型：comic.ttf */
+		@font-face {
+		  font-family: 'ComicFont';
+		  src: url('https://raw.githubusercontent.com/dong1121/JavaScript/main/fonts/comic.ttf') format('truetype');
+		  font-weight: normal;
+		  font-style: normal;
+		  font-display: swap;
+		  unicode-range: U+0020-007E; /* 英數符號範圍 */
+		}
     </style>
 </head>
 <body>
