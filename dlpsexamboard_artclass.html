@@ -49,7 +49,7 @@
         .chalk-text {
             color: rgba(255, 255, 255, 0.9);
             text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.4);
-            font-family: 'Comic Sans MS', 'Chalkboard SE', cursive;
+            font-family: 'ComicFont', 'Comic Sans MS', 'Chalkboard SE', cursive;
         }
 
         .clock {
@@ -141,6 +141,15 @@
             padding-top: 0.5rem !important;
             padding-bottom: 0.5rem !important;
         }
+		
+		//上傳字型
+		@font-face {
+		  font-family: 'ComicFont';
+		  src: url('https://github.com/dong1121/JavaScript/raw/refs/heads/main/fonts/comic.ttf') format('truetype');
+		  font-weight: normal;
+		  font-style: normal;
+		  font-display: swap;
+		}
     </style>
 </head>
 <body>
@@ -150,6 +159,11 @@
 <h2 class="text-xl md:text-2xl text-white chalk-text mb-2">現在時間</h2>
 <div class="clock text-7xl md:text-9xl font-bold chalk-text mb-3" id="clock">--:--:--</div>
 <div class="text-3xl md:text-4xl font-bold text-center py-2 px-6 rounded-lg bg-black bg-opacity-40 chalk-text inline-block" id="examStatus">尚未開始考試</div>
+<div class="text-center mt-2">
+  <button id="enableAudioBtn" onclick="enableAudio()" class="btn bg-yellow-500 text-black hover:bg-yellow-600 text-lg font-bold px-4 py-2 rounded-lg">
+    🎵 按我啟用鐘聲播放
+  </button>
+</div>
 </div>
 <!-- 左側：考試科目與時間 -->
 <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-2">
@@ -320,11 +334,13 @@ const examTimes = [
 	
     // 播放提示音（只在狀態改變時播放）
     if (status !== lastExamStatus) {
-        if (status.includes("即將開始")) {
-            document.getElementById("prepBell").play();
-        } else if (status.includes("進行") || status.includes("結束")) {
-            document.getElementById("schoolBell").play();
-        }
+        if (audioEnabled) {
+			if (status.includes("即將開始")) {
+				document.getElementById("prepBell").play();
+			} else if (status.includes("進行") || status.includes("結束")) {
+				document.getElementById("schoolBell").play();
+			}
+		}
         lastExamStatus = status;
     }
     
@@ -366,6 +382,27 @@ function adjustSingleTime(timeId, minutes) {
     const newMinute = newMinutes % 60;
     timeInput.value = `${String(newHour).padStart(2, '0')}:${String(newMinute).padStart(2, '0')}`;
     checkExamStatus(new Date());
+}
+
+//啟用鐘聲播放
+let audioEnabled = false;
+
+function enableAudio() {
+    const prepBell = document.getElementById("prepBell");
+    const schoolBell = document.getElementById("schoolBell");
+
+    // 嘗試播放與立即暫停（取得使用者互動授權）
+    prepBell.play().then(() => prepBell.pause());
+    schoolBell.play().then(() => schoolBell.pause());
+
+    audioEnabled = true;
+
+    // 隱藏按鈕
+    const btn = document.getElementById("enableAudioBtn");
+    if (btn) {
+        btn.disabled = true;
+        btn.style.display = 'none';
+    }
 }
 </script>
 <audio id="prepBell" preload="auto" src="preparation_bell.mp3"></audio>
