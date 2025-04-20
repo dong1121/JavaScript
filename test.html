@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+
+<html lang="zh-TW">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>斗小美術班入學考黑板訊息展示</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+        body {
+            font-family: 'Microsoft JhengHei', 'PingFang TC', sans-serif;
+            background-color: #000;
+            color: #fff;
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .blackboard {
+            background-color: #0f2c1e;
+            background-image:A
+                linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+                linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+            background-size: 100px 100px, 100px 100px, 20px 20px, 20px 20px;
+            background-position: -1px -1px, -1px -1px, -1px -1px, -1px -1px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.5) inset;
+            border: 15px solid #5d4037;
+            position: relative;
+            height: 100vh;
+            width: 100vw;
+            overflow: auto;
+        }
+
+        .blackboard::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='transparent'/%3E%3Cpath d='M0 0L100 100M100 0L0 100' stroke='rgba(255,255,255,0.03)' stroke-width='0.5'/%3E%3C/svg%3E");
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .chalk-text {
+            color: rgba(255, 255, 255, 0.9);
+            text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.4);
+            font-family: 'ComicFont', 'Comic Sans MS', 'Chalkboard SE', cursive;
+        }
+
+        .clock {
+            font-variant-numeric: tabular-nums;
+            letter-spacing: 2px;
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+        }
+
+        select, .number-display {
+            background-color: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: white;
+        }
+
+        select option {
+            background-color: white;
+            color: #333;
+        }
+		
+        /* 修復下拉選單顏色問題 */
+        select option {
+            background-color: white;
+            color: #333;
+        }
+        
+        .btn {
+            @apply px-2 py-1 rounded-md transition-all duration-200;
+        }
+        
+        .btn:active {
+            transform: scale(0.95);
+        }
+        
+        .content-area {
+            position: relative;
+            z-index: 1;
+        }
+        
+        .time-row {
+            position: relative;
+        }
+        
+        .time-row::after {
+            content: '';
+            position: absolute;
+            left: 10%;
+            right: 10%;
+            bottom: 0;
+            height: 1px;
+            background: rgba(255, 255, 255, 0.2);
+        }
+        
+        .time-row:last-child::after {
+            display: none;
+        }
+        
+        .active-exam {
+            background-color: rgba(255, 0, 0, 0.2);
+            border-color: rgba(255, 0, 0, 0.5);
+        }
+        
+        .time-separator {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+            padding: 0 0.5rem;
+        }
+        
+        #examStatus {
+            font-size: 2.5rem;
+            padding: 0.5rem 1.5rem;
+            margin-top: 0.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        .faded {
+            opacity: 0.2;
+            transition: opacity 0.3s ease;
+        }
+        
+        /* 縮小行距 */
+        .compact-row {
+            margin-bottom: 0.5rem !important;
+            padding-bottom: 0.5rem !important;
+        }
+        
+        .compact-input {
+            padding-top: 0.5rem !important;
+            padding-bottom: 0.5rem !important;
+        }
+		
+		/*上傳字型*/
+		@font-face {
+		  font-family: 'ComicFont';
+		  src: url('https://raw.githubusercontent.com/dong1121/JavaScript/main/fonts/comic.ttf') format('truetype');
+		  font-weight: normal;
+		  font-style: normal;
+		  font-display: swap;
+		}
+    </style>
+</head>
+<body>
+<div class="blackboard">
+<div class="content-area p-4 md:p-6">
+<div class="text-center mb-0">
+<h2 class="text-xl md:text-2xl text-white chalk-text mb-2">現在時間</h2>
+<div class="clock text-7xl md:text-9xl font-bold chalk-text mb-3" id="clock">--:--:--</div>
+<div class="text-3xl md:text-4xl font-bold text-center py-2 px-6 rounded-lg bg-black bg-opacity-40 chalk-text inline-block" id="examStatus">尚未開始考試</div>
+<div class="text-center mt-2">
+  <button id="enableAudioBtn" onclick="enableAudio()" class="btn bg-yellow-500 text-black hover:bg-yellow-600 text-lg font-bold px-4 py-2 rounded-lg">
+    🎵 按我啟用鐘聲播放
+  </button>
+</div>
+<div style="font-family: 'ComicFont', sans-serif; font-size: 30px; margin-top: 20px;">
+  這段文字應該用 GitHub 載入的 ComicFont 字型顯示
+</div>
+</div>
+<!-- 左側：考試科目與時間 -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-2">
+<div class="bg-black bg-opacity-30 rounded-lg p-4 shadow-md" id="scheduleArea">
+<!-- 三列科目與時間設定 -->
+<div class="time-row compact-row mb-2 pb-2">
+<div class="flex items-center mb-1">
+<div class="w-1/4 pr-2 text-lg chalk-text text-center">創意線畫</div>
+<div class="w-3/4 flex items-center">
+<div class="flex-1 flex items-center">
+<input class="w-full compact-input p-2 bg-black bg-opacity-30 border border-gray-600 rounded-lg text-lg text-center focus:outline-none focus:ring-2 focus:ring-blue-500 chalk-text text-2xl" data-default="08:00" id="startTime1" type="text" value="08:00"/>
+<div class="flex flex-col ml-1">
+<button class="btn bg-blue-600 text-white hover:bg-blue-700 mb-1 text-sm" onclick='adjustSingleTime("startTime1", 5)'>+</button>
+<button class="btn bg-blue-600 text-white hover:bg-blue-700 text-sm" onclick='adjustSingleTime("startTime1", -5)'>-</button>
+</div>
+</div>
+<span class="time-separator">～</span>
+<div class="flex-1 flex items-center">
+<input class="w-full compact-input p-2 bg-black bg-opacity-30 border border-gray-600 rounded-lg text-lg text-center focus:outline-none focus:ring-2 focus:ring-blue-500 chalk-text text-2xl" data-default="08:50" id="endTime1" type="text" value="08:50"/>
+<div class="flex flex-col ml-1">
+<button class="btn bg-blue-600 text-white hover:bg-blue-700 mb-1 text-sm" onclick='adjustSingleTime("endTime1", 5)'>+</button>
+<button class="btn bg-blue-600 text-white hover:bg-blue-700 text-sm" onclick='adjustSingleTime("endTime1", -5)'>-</button>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="time-row compact-row mb-2 pb-2">
+<div class="flex items-center mb-1">
+<div class="w-1/4 pr-2 text-lg chalk-text text-center">彩畫</div>
+<div class="w-3/4 flex items-center">
+<div class="flex-1 flex items-center">
+<input class="w-full compact-input p-2 bg-black bg-opacity-30 border border-gray-600 rounded-lg text-lg text-center focus:outline-none focus:ring-2 focus:ring-blue-500 chalk-text text-2xl" data-default="09:00" id="startTime2" type="text" value="09:00"/>
+<div class="flex flex-col ml-1">
+<button class="btn bg-blue-600 text-white hover:bg-blue-700 mb-1 text-sm" onclick='adjustSingleTime("startTime2", 5)'>+</button>
+<button class="btn bg-blue-600 text-white hover:bg-blue-700 text-sm" onclick='adjustSingleTime("startTime2", -5)'>-</button>
+</div>
+</div>
+<span class="time-separator">～</span>
+<div class="flex-1 flex items-center">
+<input class="w-full compact-input p-2 bg-black bg-opacity-30 border border-gray-600 rounded-lg text-lg text-center focus:outline-none focus:ring-2 focus:ring-blue-500 chalk-text text-2xl" data-default="10:30" id="endTime2" type="text" value="10:30"/>
+<div class="flex flex-col ml-1">
+<button class="btn bg-blue-600 text-white hover:bg-blue-700 mb-1 text-sm" onclick='adjustSingleTime("endTime2", 5)'>+</button>
+<button class="btn bg-blue-600 text-white hover:bg-blue-700 text-sm" onclick='adjustSingleTime("endTime2", -5)'>-</button>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="time-row compact-row mb-2 pb-2">
+<div class="flex items-center mb-1">
+<div class="w-1/4 pr-2 text-lg chalk-text text-center">立體造形</div>
+<div class="w-3/4 flex items-center">
+<div class="flex-1 flex items-center">
+<input class="w-full compact-input p-2 bg-black bg-opacity-30 border border-gray-600 rounded-lg text-lg text-center focus:outline-none focus:ring-2 focus:ring-blue-500 chalk-text text-2xl" data-default="10:40" id="startTime3" type="text" value="10:40"/>
+<div class="flex flex-col ml-1">
+<button class="btn bg-blue-600 text-white hover:bg-blue-700 mb-1 text-sm" onclick='adjustSingleTime("startTime3", 5)'>+</button>
+<button class="btn bg-blue-600 text-white hover:bg-blue-700 text-sm" onclick='adjustSingleTime("startTime3", -5)'>-</button>
+</div>
+</div>
+<span class="time-separator">～</span>
+<div class="flex-1 flex items-center">
+<input class="w-full compact-input p-2 bg-black bg-opacity-30 border border-gray-600 rounded-lg text-lg text-center focus:outline-none focus:ring-2 focus:ring-blue-500 chalk-text text-2xl" data-default="12:00" id="endTime3" type="text" value="12:00"/>
+<div class="flex flex-col ml-1">
+<button class="btn bg-blue-600 text-white hover:bg-blue-700 mb-1 text-sm" onclick='adjustSingleTime("endTime3", 5)'>+</button>
+<button class="btn bg-blue-600 text-white hover:bg-blue-700 text-sm" onclick='adjustSingleTime("endTime3", -5)'>-</button>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- 右側：應考人數 -->
+<div class="bg-black bg-opacity-30 rounded-lg p-4 shadow-md">
+<div class="mb-3 flex items-center">
+<label class="text-lg chalk-text w-1/4">應到人數</label>
+<div class="flex items-center w-3/4">
+<div class="flex-grow compact-input p-2 bg-black bg-opacity-30 border border-gray-600 rounded-lg text-lg text-center font-bold chalk-text text-2xl" id="totalStudents">11</div>
+<div class="ml-2 flex flex-col">
+<button class="btn bg-blue-600 text-white hover:bg-blue-700 mb-1 text-sm" onclick="adjustNumber('totalStudents', 1)">+</button>
+<button class="btn bg-blue-600 text-white hover:bg-blue-700 text-sm" onclick="adjustNumber('totalStudents', -1)">-</button>
+</div>
+</div>
+</div>
+<div class="mb-3 flex items-center">
+<label class="text-lg chalk-text w-1/4">缺席人數</label>
+<div class="flex items-center w-3/4">
+<div class="flex-grow compact-input p-2 bg-black bg-opacity-30 border border-gray-600 rounded-lg text-lg text-center font-bold chalk-text text-2xl" id="absentStudents">0</div>
+<div class="ml-2 flex flex-col">
+<button class="btn bg-blue-600 text-white hover:bg-blue-700 mb-1 text-sm" onclick="adjustNumber('absentStudents', 1)">+</button>
+<button class="btn bg-blue-600 text-white hover:bg-blue-700 text-sm" onclick="adjustNumber('absentStudents', -1)">-</button>
+</div>
+</div>
+</div>
+<div class="mb-3 flex items-center">
+<label class="text-lg chalk-text w-1/4">實到人數</label>
+<div class="flex items-center w-3/4">
+<div class="flex-grow compact-input p-2 bg-black bg-opacity-30 border border-gray-600 rounded-lg text-lg text-center font-bold chalk-text text-2xl" id="presentStudents">11</div>
+<div class="ml-2 flex flex-col opacity-5">
+<button class="btn bg-blue-600 text-white hover:bg-blue-700 mb-1 text-sm" disabled="" onclick="adjustNumber('classroomStudents', 1)">+</button>
+<button class="btn bg-blue-600 text-white hover:bg-blue-700 text-sm" disabled="" onclick="adjustNumber('classroomStudents', -1)">-</button>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<script>
+function updateClock() {
+    const now = new Date();
+    const h = String(now.getHours()).padStart(2, '0');
+    const m = String(now.getMinutes()).padStart(2, '0');
+    const s = String(now.getSeconds()).padStart(2, '0');
+    document.getElementById('clock').textContent = `${h}:${m}:${s}`;
+    checkExamStatus(now);
+    setTimeout(updateClock, 1000);
+}
+
+let lastExamStatus = ""; // 在 checkExamStatus 外層宣告一次即可
+
+function checkExamStatus(now) {
+    const currentHour = now.getHours();
+    const currentMinute = now.getMinutes();
+    const currentTime = currentHour * 60 + currentMinute;
+    
+    
+const examTimes = [
+    { subject: "創意線畫", startInput: "startTime1", endInput: "endTime1" },
+    { subject: "彩畫", startInput: "startTime2", endInput: "endTime2" },
+    { subject: "立體造形", startInput: "startTime3", endInput: "endTime3" }
+].map(exam => {
+    const startParts = document.getElementById(exam.startInput).value.split(':').map(Number);
+    const endParts = document.getElementById(exam.endInput).value.split(':').map(Number);
+    return {
+        subject: exam.subject,
+        start: startParts[0] * 60 + startParts[1],
+        end: endParts[0] * 60 + endParts[1]
+    };
+});
+/*
+
+        { subject: "創意線畫", start: 8 * 60 + 0, end: 8 * 60 + 50 },
+        { subject: "彩畫", start: 9 * 60 + 0, end: 10 * 60 + 30 },
+        { subject: "立體造形", start: 14 * 60 + 57, end: 14 * 60 + 58 }
+    ];
+*/
+    
+    let status = "尚未開始考試";
+    let statusClass = ["bg-black", "bg-opacity-40"];
+    
+    for (let i = 0; i < examTimes.length; i++) {
+        const exam = examTimes[i];
+        if (currentTime >= exam.start - 5 && currentTime < exam.start) {
+			status = `${exam.subject} 考試即將開始`;
+			statusClass = ["bg-blue-700", "bg-opacity-50", "text-blue-200"];
+			break;
+		} else if (currentTime >= exam.start && currentTime < exam.end) {
+            status = `正在進行 ${exam.subject} 考試`;
+            statusClass = ["bg-red-900", "bg-opacity-50", "text-red-300"];
+            break;
+        } else if (currentTime >= exam.end && currentTime < exam.end + 5) {
+            status = `${exam.subject} 考試結束`;
+            statusClass = ["bg-yellow-800", "bg-opacity-50", "text-yellow-200"];
+            break;
+        }
+    }
+	
+    // 播放提示音（只在狀態改變時播放）
+    if (status !== lastExamStatus) {
+        if (audioEnabled) {
+			if (status.includes("即將開始")) {
+				document.getElementById("prepBell").play();
+			} else if (status.includes("進行") || status.includes("結束")) {
+				document.getElementById("schoolBell").play();
+			}
+		}
+        lastExamStatus = status;
+    }
+    
+    const examStatus = document.getElementById("examStatus");
+    examStatus.textContent = status;
+    examStatus.className = "text-3xl md:text-4xl font-bold text-center py-2 px-6 rounded-lg chalk-text inline-block " + statusClass.join(" ");
+}
+
+function adjustNumber(id, delta) {
+    const el = document.getElementById(id);
+    let val = parseInt(el.textContent) || 0;
+    val = Math.max(0, val + delta);
+    if (id === 'absentStudents') {
+        const total = parseInt(document.getElementById('totalStudents').textContent) || 0;
+        val = Math.min(val, total);
+    }
+    el.textContent = val;
+    updatePresentStudents();
+}
+
+function updatePresentStudents() {
+    const total = parseInt(document.getElementById('totalStudents').textContent) || 0;
+    const absent = parseInt(document.getElementById('absentStudents').textContent) || 0;
+    const present = Math.max(0, total - absent);
+    document.getElementById('presentStudents').textContent = present;
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    updateClock();
+});
+
+
+function adjustSingleTime(timeId, minutes) {
+    const timeInput = document.getElementById(timeId);
+    const [hour, minute] = timeInput.value.split(':').map(Number);
+    let newMinutes = hour * 60 + minute + minutes;
+    newMinutes = Math.max(0, Math.min(23 * 60 + 59, newMinutes));
+    const newHour = Math.floor(newMinutes / 60);
+    const newMinute = newMinutes % 60;
+    timeInput.value = `${String(newHour).padStart(2, '0')}:${String(newMinute).padStart(2, '0')}`;
+    checkExamStatus(new Date());
+}
+
+//啟用鐘聲播放
+let audioEnabled = false;
+
+function enableAudio() {
+    const prepBell = document.getElementById("prepBell");
+    const schoolBell = document.getElementById("schoolBell");
+
+    // 嘗試播放與立即暫停（取得使用者互動授權）
+    prepBell.play().then(() => prepBell.pause());
+    schoolBell.play().then(() => schoolBell.pause());
+
+    audioEnabled = true;
+
+    // 隱藏按鈕
+    const btn = document.getElementById("enableAudioBtn");
+    if (btn) {
+        btn.disabled = true;
+        btn.style.display = 'none';
+    }
+}
+</script>
+<audio id="prepBell" preload="auto" src="preparation_bell.mp3"></audio>
+<audio id="schoolBell" preload="auto" src="school_bell.mp3"></audio>
+</body>
+</html>
