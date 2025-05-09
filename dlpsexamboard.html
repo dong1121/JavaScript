@@ -173,8 +173,16 @@
             <div class="text-center mb-0 opacity-5">
                 <label for="groupSelector" class="text-white text-lg chalk-text">選擇年級群組：</label>
                 <select id="groupSelector" class="text-white text-lg chalk-text p-2 rounded">
-                    <option value="低年級">低年級</option>
-                    <option value="中高年級">中高年級</option>
+                    <option value="一年級">一年級</option>
+					<option value="二年級">二年級</option>
+					<option value="三年級">三年級</option>
+					<option value="四年級">四年級</option>
+					<option value="五年級">五年級</option>
+					<option value="六年級">六年級</option>
+					<option value="低年級">低年級</option>
+					<option value="中年級">中年級</option>
+					<option value="高年級">高年級</option>
+					<option value="中高年級">中高年級</option>
                 </select>
             </div>
 			<!-- 左側：考試科目與時間 -->
@@ -182,7 +190,7 @@
                 <div id="scheduleArea" class="bg-black bg-opacity-30 rounded-lg p-4 shadow-md">
                     <!-- 迴圈產出三列科目與時間設定 -->
                     <script>
-                        const subjects = ['--', '國語', '數學', '英文', '自然', '社會', '生活'];
+                        const subjects = ['--', '國語', '數學', '英語', '自然', '社會', '生活'];
                         for (let i = 1; i <= 3; i++) {
 							const startMin = 8 * 60 + 50 + (i - 1) * 50; // 起始時間從8:50開始，每列加50分鐘
 							const endMin = 9 * 60 + 30 + (i - 1) * 50;   // 結束時間從9:30開始，每列加50分鐘
@@ -293,7 +301,20 @@
         function getGroupFromURL() {
             const params = new URLSearchParams(window.location.search);
             const groupParam = params.get('group');
-            return groupParam === '1' ? '低年級' : '中高年級';
+            const groupMap = {
+				"1": "一年級",
+				"2": "二年級",
+				"3": "三年級",
+				"4": "四年級",
+				"5": "五年級",
+				"6": "六年級",
+				"7": "低年級",
+				"8": "中年級",
+				"9": "高年級",
+				"10": "中高年級"
+			};
+
+			return groupMap[groupParam] || "低年級";  // 預設值可依需要修改
         }
 		
 		function padTime(timeStr) {
