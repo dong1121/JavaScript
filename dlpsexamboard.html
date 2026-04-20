@@ -167,37 +167,39 @@
         <div class="content-area p-4 md:p-6">
             <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-2">
                 
-                <div class="col-span-1 bg-black bg-opacity-30 rounded-lg p-4 shadow-md border border-gray-700 flex flex-col">
-                    <h3 class="text-xl text-yellow-300 chalk-text mb-2 text-center border-b border-gray-600 pb-2">考場須知</h3>
-                    <div id="noticeLeft" class="text-base md:text-lg chalk-text whitespace-pre-wrap flex-grow">讀取中...</div>
-                </div>
+                <div id="leftContainer" class="col-span-1 bg-black bg-opacity-30 rounded-lg p-4 shadow-md border border-gray-700 flex flex-col">
+					<h3 class="text-xl text-yellow-300 chalk-text mb-2 text-center border-b border-gray-600 pb-2">考場須知</h3>
+					<div id="noticeLeft" class="text-lg md:text-xl leading-snug chalk-text whitespace-pre-wrap flex-grow"></div>
+				</div>
 
-                <div class="col-span-1 text-center flex flex-col items-center justify-center">
-					<h2 class="text-xl md:text-2xl text-white chalk-text mb-2">現在時間</h2>
-					<div id="clock" class="clock text-6xl md:text-8xl font-bold chalk-text mb-3">--:--:--</div>
-					<div id="examStatus" class="text-3xl md:text-4xl font-bold text-center py-2 px-6 rounded-lg bg-black bg-opacity-40 chalk-text inline-block mb-4">尚未開始考試</div>
-					
-					<div class="opacity-10 hover:opacity-100 transition-opacity duration-300">
-						<label for="groupSelector" class="text-white text-base chalk-text">選擇年級：</label>
-						<select id="groupSelector" class="text-white text-base chalk-text p-1 rounded bg-black bg-opacity-30 border border-gray-600 focus:outline-none focus:ring-1 focus:ring-yellow-500">
-							<option value="一年級">一年級</option>
-							<option value="二年級">二年級</option>
-							<option value="三年級">三年級</option>
-							<option value="四年級">四年級</option>
-							<option value="五年級">五年級</option>
-							<option value="六年級">六年級</option>
-							<option value="低年級">低年級</option>
-							<option value="中年級">中年級</option>
-							<option value="高年級">高年級</option>
-							<option value="中高年級">中高年級</option>
-						</select>
+                <div id="clockArea" class="text-center flex flex-col items-center justify-center">
+					<div class="col-span-1 text-center flex flex-col items-center justify-center">
+						<h2 class="text-xl md:text-2xl text-white chalk-text mb-2">現在時間</h2>
+						<div id="clock" class="clock text-6xl md:text-8xl font-bold chalk-text mb-3">--:--:--</div>
+						<div id="examStatus" class="text-3xl md:text-4xl font-bold text-center py-2 px-6 rounded-lg bg-black bg-opacity-40 chalk-text inline-block mb-4">尚未開始考試</div>
+						
+						<div class="opacity-10 hover:opacity-100 transition-opacity duration-300">
+							<label for="groupSelector" class="text-white text-base chalk-text">選擇年級：</label>
+							<select id="groupSelector" class="text-white text-base chalk-text p-1 rounded bg-black bg-opacity-30 border border-gray-600 focus:outline-none focus:ring-1 focus:ring-yellow-500">
+								<option value="一年級">一年級</option>
+								<option value="二年級">二年級</option>
+								<option value="三年級">三年級</option>
+								<option value="四年級">四年級</option>
+								<option value="五年級">五年級</option>
+								<option value="六年級">六年級</option>
+								<option value="低年級">低年級</option>
+								<option value="中年級">中年級</option>
+								<option value="高年級">高年級</option>
+								<option value="中高年級">中高年級</option>
+							</select>
+						</div>
 					</div>
 				</div>
 
-                <div class="col-span-1 bg-black bg-opacity-30 rounded-lg p-4 shadow-md border border-gray-700 flex flex-col">
-                    <h3 class="text-xl text-yellow-300 chalk-text mb-2 text-center border-b border-gray-600 pb-2">重要提醒</h3>
-                    <div id="noticeRight" class="text-base md:text-lg chalk-text whitespace-pre-wrap flex-grow">讀取中...</div>
-                </div>
+                <div id="rightContainer" class="col-span-1 bg-black bg-opacity-30 rounded-lg p-4 shadow-md border border-gray-700 flex flex-col">
+					<h3 class="text-xl text-yellow-300 chalk-text mb-2 text-center border-b border-gray-600 pb-2">重要提醒</h3>
+					<div id="noticeRight" class="text-lg md:text-xl leading-snug chalk-text whitespace-pre-wrap flex-grow"></div>
+				</div>
 
             </div>
 			<!-- 左側：考試科目與時間 -->
@@ -357,12 +359,47 @@
                     });
                 }
 
-                // 2. 處理注意事項資料 (抓取 notices 物件並塞入對應的 div)
-                if (data.notices) {
-                    // textContent 搭配 CSS 的 whitespace-pre-wrap 就能完美呈現試算表的換行
-                    document.getElementById('noticeLeft').textContent = data.notices.left || "";
-                    document.getElementById('noticeRight').textContent = data.notices.right || "";
-                }
+                // 2. 處理注意事項資料
+				if (data.notices) {
+					const leftText = data.notices.left || "";
+					const rightText = data.notices.right || "";
+					
+					// 填入文字
+					document.getElementById('noticeLeft').textContent = leftText;
+					document.getElementById('noticeRight').textContent = rightText;
+
+					// 判斷是否為空 (去除空白字元)
+					const hasLeft = leftText.trim() !== "";
+					const hasRight = rightText.trim() !== "";
+
+					// 取得容器元素
+					const leftContainer = document.getElementById('leftContainer');
+					const rightContainer = document.getElementById('rightContainer');
+					const clockArea = document.getElementById('clockArea');
+					const topGrid = document.getElementById('topGrid');
+
+					// 根據有無資料顯示/隱藏容器
+					leftContainer.classList.toggle('hidden', !hasLeft);
+					rightContainer.classList.toggle('hidden', !hasRight);
+
+					// 動態調整版面配置 (核心邏輯)
+					if (!hasLeft && !hasRight) {
+						// 左右都空：時鐘獨佔 3 欄
+						topGrid.classList.remove('md:grid-cols-3');
+						topGrid.classList.add('md:grid-cols-1');
+						clockArea.className = "col-span-1 text-center flex flex-col items-center justify-center";
+					} else if (!hasLeft || !hasRight) {
+						// 只有一邊有資料：使用 2 欄配置
+						topGrid.classList.remove('md:grid-cols-3', 'md:grid-cols-1');
+						topGrid.classList.add('md:grid-cols-2');
+						clockArea.className = "col-span-1 text-center flex flex-col items-center justify-center";
+					} else {
+						// 兩邊都有資料：恢復原本 3 欄配置
+						topGrid.classList.remove('md:grid-cols-1', 'md:grid-cols-2');
+						topGrid.classList.add('md:grid-cols-3');
+						clockArea.className = "col-span-1 text-center flex flex-col items-center justify-center";
+					}
+				}
             } catch (error) {
                 console.error("資料獲取失敗：", error);
                 document.getElementById('noticeLeft').textContent = "無法載入注意事項";
