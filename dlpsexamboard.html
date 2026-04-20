@@ -165,10 +165,24 @@
 <body>
     <div class="blackboard">
         <div class="content-area p-4 md:p-6">
-            <div class="text-center mb-0">
-                <h2 class="text-xl md:text-2xl text-white chalk-text mb-2">現在時間</h2>
-                <div id="clock" class="clock text-7xl md:text-9xl font-bold chalk-text mb-3">--:--:--</div>
-                <div id="examStatus" class="text-3xl md:text-4xl font-bold text-center py-2 px-6 rounded-lg bg-black bg-opacity-40 chalk-text inline-block">尚未開始考試</div>
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-2">
+                
+                <div class="col-span-1 bg-black bg-opacity-30 rounded-lg p-4 shadow-md border border-gray-700 flex flex-col">
+                    <h3 class="text-xl text-yellow-300 chalk-text mb-2 text-center border-b border-gray-600 pb-2">考場須知</h3>
+                    <div id="noticeLeft" class="text-lg md:text-xl chalk-text whitespace-pre-wrap flex-grow">讀取中...</div>
+                </div>
+
+                <div class="col-span-1 md:col-span-2 text-center flex flex-col items-center justify-center">
+                    <h2 class="text-xl md:text-2xl text-white chalk-text mb-2">現在時間</h2>
+                    <div id="clock" class="clock text-6xl md:text-8xl font-bold chalk-text mb-3">--:--:--</div>
+                    <div id="examStatus" class="text-3xl md:text-4xl font-bold text-center py-2 px-6 rounded-lg bg-black bg-opacity-40 chalk-text inline-block">尚未開始考試</div>
+                </div>
+
+                <div class="col-span-1 bg-black bg-opacity-30 rounded-lg p-4 shadow-md border border-gray-700 flex flex-col">
+                    <h3 class="text-xl text-yellow-300 chalk-text mb-2 text-center border-b border-gray-600 pb-2">重要提醒</h3>
+                    <div id="noticeRight" class="text-lg md:text-xl chalk-text whitespace-pre-wrap flex-grow">讀取中...</div>
+                </div>
+
             </div>
             <div class="text-center mb-0 opacity-5">
                 <label for="groupSelector" class="text-white text-lg chalk-text">選擇年級群組：</label>
@@ -324,19 +338,35 @@
 
         async function fetchSchedule(group) {
             const url = `https://script.google.com/macros/s/AKfycbwR2O9Me4EHvPt2rhpqKIIZxeyiKnGgPKe4h-LMVIbgM72qZmoX4W83xDJLcadC2Gig/exec?group=${group}`;
-            const res = await fetch(url);
-            const data = await res.json();
-
-            data.forEach((item, index) => {
-                if (index < 3) {
-					const i = index + 1;
-                    document.getElementById(`subject${i}`).value = item.subject;
-                    document.getElementById(`startTime${i}`).value = padTime(item.start);
-					document.getElementById(`endTime${i}`).value = padTime(item.end);
-					
-					handleSubjectChange(i, true);
+            try {
+                const res = await fetch(url);
+                const data = await res.json();
+                
+                // 1. 處理考程資料 (注意：原本是 data.forEach，現在改為 data.schedule.forEach)
+                if (data.schedule && data.schedule.length > 0) {
+                    data.schedule.forEach((item, index) => {
+                        if (index < 3) {
+                            const i = index + 1;
+                            document.getElementById(`subject${i}`).value = item.subject;
+                            document.getElementById(`startTime${i}`).value = padTime(item.start);
+                            document.getElementById(`endTime${i}`).value = padTime(item.end);
+                            
+                            handleSubjectChange(i, true);
+                        }
+                    });
                 }
-            });
+
+                // 2. 處理注意事項資料 (抓取 notices 物件並塞入對應的 div)
+                if (data.notices) {
+                    // textContent 搭配 CSS 的 whitespace-pre-wrap 就能完美呈現試算表的換行
+                    document.getElementById('noticeLeft').textContent = data.notices.left || "";
+                    document.getElementById('noticeRight').textContent = data.notices.right || "";
+                }
+            } catch (error) {
+                console.error("資料獲取失敗：", error);
+                document.getElementById('noticeLeft').textContent = "無法載入注意事項";
+                document.getElementById('noticeRight').textContent = "無法載入注意事項";
+            }
         }
 		
 		// 檢查考試狀態
