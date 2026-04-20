@@ -165,39 +165,40 @@
 <body>
     <div class="blackboard">
         <div class="content-area p-4 md:p-6">
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-2">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-2">
                 
                 <div class="col-span-1 bg-black bg-opacity-30 rounded-lg p-4 shadow-md border border-gray-700 flex flex-col">
                     <h3 class="text-xl text-yellow-300 chalk-text mb-2 text-center border-b border-gray-600 pb-2">考場須知</h3>
-                    <div id="noticeLeft" class="text-lg md:text-xl chalk-text whitespace-pre-wrap flex-grow">讀取中...</div>
+                    <div id="noticeLeft" class="text-base md:text-lg chalk-text whitespace-pre-wrap flex-grow">讀取中...</div>
                 </div>
 
-                <div class="col-span-1 md:col-span-2 text-center flex flex-col items-center justify-center">
-                    <h2 class="text-xl md:text-2xl text-white chalk-text mb-2">現在時間</h2>
-                    <div id="clock" class="clock text-6xl md:text-8xl font-bold chalk-text mb-3">--:--:--</div>
-                    <div id="examStatus" class="text-3xl md:text-4xl font-bold text-center py-2 px-6 rounded-lg bg-black bg-opacity-40 chalk-text inline-block">尚未開始考試</div>
-                </div>
+                <div class="col-span-1 text-center flex flex-col items-center justify-center">
+					<h2 class="text-xl md:text-2xl text-white chalk-text mb-2">現在時間</h2>
+					<div id="clock" class="clock text-6xl md:text-8xl font-bold chalk-text mb-3">--:--:--</div>
+					<div id="examStatus" class="text-3xl md:text-4xl font-bold text-center py-2 px-6 rounded-lg bg-black bg-opacity-40 chalk-text inline-block mb-4">尚未開始考試</div>
+					
+					<div class="opacity-10 hover:opacity-100 transition-opacity duration-300">
+						<label for="groupSelector" class="text-white text-base chalk-text">選擇年級：</label>
+						<select id="groupSelector" class="text-white text-base chalk-text p-1 rounded bg-black bg-opacity-30 border border-gray-600 focus:outline-none focus:ring-1 focus:ring-yellow-500">
+							<option value="一年級">一年級</option>
+							<option value="二年級">二年級</option>
+							<option value="三年級">三年級</option>
+							<option value="四年級">四年級</option>
+							<option value="五年級">五年級</option>
+							<option value="六年級">六年級</option>
+							<option value="低年級">低年級</option>
+							<option value="中年級">中年級</option>
+							<option value="高年級">高年級</option>
+							<option value="中高年級">中高年級</option>
+						</select>
+					</div>
+				</div>
 
                 <div class="col-span-1 bg-black bg-opacity-30 rounded-lg p-4 shadow-md border border-gray-700 flex flex-col">
                     <h3 class="text-xl text-yellow-300 chalk-text mb-2 text-center border-b border-gray-600 pb-2">重要提醒</h3>
-                    <div id="noticeRight" class="text-lg md:text-xl chalk-text whitespace-pre-wrap flex-grow">讀取中...</div>
+                    <div id="noticeRight" class="text-base md:text-lg chalk-text whitespace-pre-wrap flex-grow">讀取中...</div>
                 </div>
 
-            </div>
-            <div class="text-center mb-0 opacity-5">
-                <label for="groupSelector" class="text-white text-lg chalk-text">選擇年級群組：</label>
-                <select id="groupSelector" class="text-white text-lg chalk-text p-2 rounded">
-                    <option value="一年級">一年級</option>
-					<option value="二年級">二年級</option>
-					<option value="三年級">三年級</option>
-					<option value="四年級">四年級</option>
-					<option value="五年級">五年級</option>
-					<option value="六年級">六年級</option>
-					<option value="低年級">低年級</option>
-					<option value="中年級">中年級</option>
-					<option value="高年級">高年級</option>
-					<option value="中高年級">中高年級</option>
-                </select>
             </div>
 			<!-- 左側：考試科目與時間 -->
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-2">
